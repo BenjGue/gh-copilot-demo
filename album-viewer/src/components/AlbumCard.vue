@@ -21,13 +21,14 @@
     </div>
     
     <div class="album-actions">
-      <button class="btn btn-primary">Add to Cart</button>
-      <button class="btn btn-secondary">Preview</button>
+      <button class="btn btn-primary">{{ t('card.addToCart') }}</button>
+      <button class="btn btn-secondary">{{ t('card.preview') }}</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import type { Album } from '../types/album'
 
 interface Props {
@@ -35,6 +36,8 @@ interface Props {
 }
 
 defineProps<Props>()
+
+const { t } = useI18n()
 
 const handleImageError = (event: Event): void => {
   const target = event.target as HTMLImageElement

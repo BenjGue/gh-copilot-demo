@@ -1,0 +1,21 @@
+{
+  "header": {
+    "title": "🎵 Albumsammlung",
+    "subtitle": "Entdecke großartige Musikalben",
+    "language": "Sprache"
+  },
+  "status": {
+    "loading": "Alben werden geladen...",
+    "error": "Alben konnten nicht geladen werden. Bitte stelle sicher, dass die API läuft.",
+    "retry": "Erneut versuchen"
+  },
+  "card": {
+    "addToCart": "In den Warenkorb",
+    "preview": "Vorschau"
+  },
+  "languages": {
+    "en": "English",
+    "fr": "Français",
+    "de": "Deutsch"
+  }
+}

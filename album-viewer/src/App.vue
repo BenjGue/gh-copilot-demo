@@ -1,19 +1,34 @@
 <template>
   <div class="app">
     <header class="header">
-      <h1>🎵 Album Collection</h1>
-      <p>Discover amazing music albums</p>
+      <div class="header-top">
+        <div class="language-selector">
+          <label for="lang-select" class="lang-label">{{ t('header.language') }}:</label>
+          <select
+            id="lang-select"
+            class="lang-select"
+            :value="locale"
+            @change="onLocaleChange(($event.target as HTMLSelectElement).value)"
+          >
+            <option v-for="code in SUPPORTED_LOCALES" :key="code" :value="code">
+              {{ t(`languages.${code}`) }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <h1>{{ t('header.title') }}</h1>
+      <p>{{ t('header.subtitle') }}</p>
     </header>
 
     <main class="main">
       <div v-if="loading" class="loading">
         <div class="spinner"></div>
-        <p>Loading albums...</p>
+        <p>{{ t('status.loading') }}</p>
       </div>
 
       <div v-else-if="error" class="error">
         <p>{{ error }}</p>
-        <button @click="fetchAlbums" class="retry-btn">Try Again</button>
+        <button @click="fetchAlbums" class="retry-btn">{{ t('status.retry') }}</button>
       </div>
 
       <div v-else class="albums-grid">
@@ -29,9 +44,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import AlbumCard from './components/AlbumCard.vue'
 import type { Album } from './types/album'
+import { SUPPORTED_LOCALES, setLocale, type SupportedLocale } from './i18n'
+
+const { t, locale } = useI18n()
 
 const albums = ref<Album[]>([])
 const loading = ref<boolean>(true)
@@ -44,10 +63,16 @@ const fetchAlbums = async (): Promise<void> => {
     const response = await axios.get<Album[]>('/albums')
     albums.value = response.data
   } catch (err) {
-    error.value = 'Failed to load albums. Please make sure the API is running.'
+    error.value = t('status.error')
     console.error('Error fetching albums:', err)
   } finally {
     loading.value = false
+  }
+}
+
+const onLocaleChange = (value: string): void => {
+  if ((SUPPORTED_LOCALES as readonly string[]).includes(value)) {
+    setLocale(value as SupportedLocale)
   }
 }
 
@@ -58,7 +83,38 @@ onMounted(() => {
 
 <style scoped>
 .app {
-  min-height: 100vh;
+  min-h-top {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.language-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 0.4rem 0.75rem;
+  border-radius: 25px;
+  backdrop-filter: blur(8px);
+}
+
+.lang-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.lang-select {
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  border: none;
+  border-radius: 15px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.headereight: 100vh;
   padding: 2rem;
 }
 
