@@ -11,8 +11,11 @@
 
 services:
   albums-api:
+    # Service name kept as `albums-api` so the viewer's nginx reverse-proxy
+    # (/albums -> http://albums-api:3000) continues to work transparently.
+    # The implementation now lives in ./album-api-v2 (Python FastAPI rewrite).
     build:
-      context: ./albums-api
+      context: ./album-api-v2
       dockerfile: Dockerfile
     image: albums-api:latest
     restart: unless-stopped
