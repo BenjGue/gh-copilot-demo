@@ -21,14 +21,19 @@
 @description('Azure region for all resources.')
 param location string = resourceGroup().location
 
-@description('VM size. B2s (2 vCPU / 4 GB) fits a single-user pre-test; bump to D2s_v5/D4s_v5 for a shared workshop server.')
+@description('VM size. B2s (2 vCPU / 4 GB) fits a single-user pre-test; bump to D2s_v5/D4s_v5 for a shared workshop server. The D*as_v5 (AMD) family is included as a fallback when B-series capacity is restricted.')
 @allowed([
   'Standard_B2s'
   'Standard_B2ms'
+  'Standard_B2s_v2'
+  'Standard_B2as_v2'
   'Standard_D2s_v5'
+  'Standard_D2as_v5'
+  'Standard_D2as_v7'
   'Standard_D4s_v5'
+  'Standard_D4as_v5'
 ])
-param vmSize string = 'Standard_B2s'
+param vmSize string = 'Standard_B2s_v2'
 
 @description('OS disk size in GB. Dokploy minimum is 30 GB.')
 @minValue(30)
