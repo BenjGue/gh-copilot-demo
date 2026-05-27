@@ -13,6 +13,16 @@
     "addToCart": "In den Warenkorb",
     "preview": "Vorschau"
   },
+  "cart": {
+    "open": "Warenkorb öffnen",
+    "close": "Warenkorb schließen",
+    "title": "Dein Warenkorb",
+    "empty": "Dein Warenkorb ist leer.",
+    "remove": "Entfernen",
+    "total": "Gesamt",
+    "checkout": "Zur Kasse",
+    "inCart": "Im Warenkorb"
+  },
   "languages": {
     "en": "English",
     "fr": "Français",

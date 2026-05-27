@@ -15,6 +15,30 @@
             </option>
           </select>
         </div>
+        <button
+          class="cart-button"
+          type="button"
+          :aria-label="t('cart.open')"
+          @click="cartOpen = true"
+        >
+          <svg
+            class="cart-icon"
+            viewBox="0 0 24 24"
+            width="22"
+            height="22"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"></path>
+          </svg>
+          <span v-if="cartCount > 0" class="cart-badge" aria-hidden="true">{{ cartCount }}</span>
+        </button>
       </div>
       <h1>{{ t('header.title') }}</h1>
       <p>{{ t('header.subtitle') }}</p>
@@ -32,13 +56,15 @@
       </div>
 
       <div v-else class="albums-grid">
-        <AlbumCard 
-          v-for="album in albums" 
-          :key="album.id" 
-          :album="album" 
+        <AlbumCard
+          v-for="album in albums"
+          :key="album.id"
+          :album="album"
         />
       </div>
     </main>
+
+    <CartDrawer :open="cartOpen" @close="cartOpen = false" />
   </div>
 </template>
 
@@ -47,10 +73,15 @@ import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import AlbumCard from './components/AlbumCard.vue'
+import CartDrawer from './components/CartDrawer.vue'
 import type { Album } from './types/album'
 import { SUPPORTED_LOCALES, setLocale, type SupportedLocale } from './i18n'
+import { useCart } from './stores/cart'
 
 const { t, locale } = useI18n()
+const { count: cartCount } = useCart()
+
+const cartOpen = ref<boolean>(false)
 
 const albums = ref<Album[]>([])
 const loading = ref<boolean>(true)
@@ -83,9 +114,21 @@ onMounted(() => {
 
 <style scoped>
 .app {
-  min-h-top {
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+  color: white;
+}
+
+.header-top {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
   margin-bottom: 1rem;
 }
 
@@ -114,14 +157,45 @@ onMounted(() => {
   cursor: pointer;
 }
 
-.headereight: 100vh;
-  padding: 2rem;
+.cart-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s ease;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 3rem;
+.cart-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.cart-icon {
+  display: block;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: #e44;
   color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 1);
 }
 
 .header h1 {
@@ -202,11 +276,11 @@ onMounted(() => {
   .app {
     padding: 1rem;
   }
-  
+
   .header h1 {
     font-size: 2rem;
   }
-  
+
   .albums-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
