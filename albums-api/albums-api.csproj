@@ -12,4 +12,12 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.3" />
   </ItemGroup>
 
+  <!-- Exclude the test project sources from the Web SDK's implicit globbing -->
+  <ItemGroup>
+    <Compile Remove="Tests/**" />
+    <Content Remove="Tests/**" />
+    <None Remove="Tests/**" />
+    <EmbeddedResource Remove="Tests/**" />
+  </ItemGroup>
+
 </Project>

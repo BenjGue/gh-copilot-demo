@@ -4,12 +4,18 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy csproj first for better layer caching
+# Copy csproj files first for better layer caching
 COPY albums-api.csproj ./
-RUN dotnet restore albums-api.csproj
+COPY Tests/albums-api.tests.csproj Tests/
+RUN dotnet restore albums-api.csproj \
+ && dotnet restore Tests/albums-api.tests.csproj
 
 # Copy the rest of the source
 COPY . ./
+
+# Run unit tests — a failing test fails the Docker build (and therefore the deploy)
+RUN dotnet test Tests/albums-api.tests.csproj -c Release --nologo
+
 RUN dotnet publish albums-api.csproj -c Release -o /app/publish /p:UseAppHost=false
 
 # --- Runtime stage ------------------------------------------------------------
