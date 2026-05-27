@@ -32,6 +32,13 @@ services:
       - albums-api
     expose:
       - "80"
+    networks:
+      - default
+      - dokploy-network
     # Uncomment to expose the viewer directly on the host during local debugging:
     # ports:
     #   - "8080:80"
+
+networks:
+  dokploy-network:
+    external: true
