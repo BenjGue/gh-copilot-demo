@@ -1,0 +1,37 @@
+# Docker Compose definition consumed by Dokploy.
+#
+# Two services:
+#   - albums-api    : .NET 8 minimal Web API, listens on port 3000
+#   - album-viewer  : Vue 3 SPA served by nginx on port 80, reverse-proxies
+#                     /albums to the albums-api service via Docker's internal DNS
+#
+# Dokploy assigns the public *.traefik.me hostnames through the UI (Domains tab),
+# so there are no Traefik labels here — keep this file portable for local
+# `docker compose up` as well.
+
+services:
+  albums-api:
+    build:
+      context: ./albums-api
+      dockerfile: Dockerfile
+    image: albums-api:latest
+    restart: unless-stopped
+    expose:
+      - "3000"
+    # Uncomment to expose the API directly on the host during local debugging:
+    # ports:
+    #   - "3000:3000"
+
+  album-viewer:
+    build:
+      context: ./album-viewer
+      dockerfile: Dockerfile
+    image: album-viewer:latest
+    restart: unless-stopped
+    depends_on:
+      - albums-api
+    expose:
+      - "80"
+    # Uncomment to expose the viewer directly on the host during local debugging:
+    # ports:
+    #   - "8080:80"
