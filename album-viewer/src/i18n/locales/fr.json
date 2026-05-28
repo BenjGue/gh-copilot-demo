@@ -13,6 +13,16 @@
     "addToCart": "Ajouter au panier",
     "preview": "Aperçu"
   },
+  "cart": {
+    "open": "Ouvrir le panier",
+    "close": "Fermer le panier",
+    "title": "Votre panier",
+    "empty": "Votre panier est vide.",
+    "remove": "Retirer",
+    "total": "Total",
+    "checkout": "Commander",
+    "inCart": "Dans le panier"
+  },
   "languages": {
     "en": "English",
     "fr": "Français",
