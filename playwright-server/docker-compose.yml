@@ -1,0 +1,43 @@
+# Standalone Dokploy app for the shared Playwright server.
+#
+# Deploy this as its OWN Dokploy application (not part of the album-viewer
+# stack). DevOps creates one app per workshop / per company.
+#
+# After deploy:
+#   - generate a *.traefik.me domain for the `playwright-server` service
+#   - point it at container port 5400
+#   - enable HTTPS (Traefik handles Let's Encrypt)
+#   - WebSocket upgrade works through Traefik with no extra config
+#
+# Participants then set:
+#   PLAYWRIGHT_WS_ENDPOINT=wss://<your-generated-host>/ws
+#
+# Pin PLAYWRIGHT_VERSION to match album-viewer/package.json's @playwright/test.
+
+services:
+  playwright-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PLAYWRIGHT_VERSION: "1.48.0"
+    image: playwright-server:1.48.0
+    restart: unless-stopped
+    # IPC=host fixes Chromium memory issues with /dev/shm being too small
+    # in containers. Required by upstream Playwright image guidance.
+    ipc: host
+    init: true
+    ports:
+      - "5400:5400"
+    # Optional hardening: drop write access where not needed. Playwright
+    # writes to /tmp for user-data-dirs, so keep /tmp writable.
+    read_only: false
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2g
+        reservations:
+          memory: 512m
